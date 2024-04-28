@@ -18,33 +18,38 @@ public class UserServiceImpl implements UserService {
     private UserRepository userRepository;
     private UserMapper userMapper;
 
-    public UserServiceImpl(UserRepository userRepository, UserMapper userMapper) {
+    private JWTService jwtService;
+
+    public UserServiceImpl(UserRepository userRepository, UserMapper userMapper, JWTService jwtService) {
         this.userRepository = userRepository;
         this.userMapper = userMapper;
+        this.jwtService = jwtService;
     }
 
     //CREATE A USER
     @Transactional
     public User addUser(UserDto userDto){
-        Optional<User> user = userRepository.findByEmail(userDto.getEmail());
-        if(user.isPresent()){
+        Optional<User> opUser = userRepository.findByEmail(userDto.getEmail());
+        if(opUser.isPresent()){
             throw new UserAlreadyExistsException("User already found in database!");
         }
-        User user1 = userMapper.mapToEntity(userDto);
-        User savedUser = userRepository.save(user1);
+        User user = userMapper.mapToEntity(userDto);
+        User savedUser = userRepository.save(user);
         return savedUser;
     }
 
     @Override
-    public boolean verifyLogin(LoginDto loginDto) {
+    public String verifyLogin(LoginDto loginDto) {
 
         Optional<User> opUser = userRepository.findByEmail(loginDto.getEmail());
         if(opUser.isPresent()){
             User user = opUser.get();
             boolean checkpw = BCrypt.checkpw(loginDto.getPassword(), user.getPassword());
-            return checkpw;
+            if(checkpw){
+                String token = jwtService.generateToken(user);
+                return token;
+            }
         }
-
-        return false;
+        return null;
     }
 }

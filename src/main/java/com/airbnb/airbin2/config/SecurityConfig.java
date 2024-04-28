@@ -15,9 +15,9 @@ import static org.springframework.security.config.Customizer.withDefaults;
 public class SecurityConfig {
     @Bean
     SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
-        http.csrf((csrf)-> csrf.disable()).cors((cors)-> cors.disable());
+        http.csrf((csrf) -> csrf.disable()).cors((cors) -> cors.disable());
         http.authorizeHttpRequests((requests) -> requests.anyRequest().permitAll());
-       /* http.formLogin(withDefaults());*/
+        http.formLogin(withDefaults());
         http.httpBasic(withDefaults());
         return http.build();
     }

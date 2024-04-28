@@ -12,5 +12,5 @@ public interface UserService {
     User addUser(UserDto userDto);
 
     //Verify Login
-    boolean verifyLogin(LoginDto loginDto);
+    String verifyLogin(LoginDto loginDto);
 }

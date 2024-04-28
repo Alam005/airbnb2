@@ -29,9 +29,9 @@ public class UserController {
 
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody LoginDto loginDto){
-        boolean result = userService.verifyLogin(loginDto);
-        if(result){
-            return new ResponseEntity<>("Login Successful!",HttpStatus.OK);
+        String token = userService.verifyLogin(loginDto);
+        if(token != null){
+            return new ResponseEntity<>(token,HttpStatus.OK);
         }
         else {
             return new ResponseEntity<>("Invalid login credential",HttpStatus.UNAUTHORIZED);
