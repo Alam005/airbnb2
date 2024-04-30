@@ -7,18 +7,26 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-
-import static org.springframework.security.config.Customizer.withDefaults;
+import org.springframework.security.web.access.intercept.AuthorizationFilter;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
+
+    private JWTRequestFilter jwtRequestFilter;
+
+    public SecurityConfig(JWTRequestFilter jwtRequestFilter) {
+        this.jwtRequestFilter = jwtRequestFilter;
+    }
+
     @Bean
     SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
         http.csrf((csrf) -> csrf.disable()).cors((cors) -> cors.disable());
-        http.authorizeHttpRequests((requests) -> requests.anyRequest().permitAll());
-        http.formLogin(withDefaults());
-        http.httpBasic(withDefaults());
+        http.addFilterBefore(jwtRequestFilter, AuthorizationFilter.class);
+        http.authorizeHttpRequests((requests) -> requests.requestMatchers("/api/v1/users/add","/api/v1/users/login").permitAll().
+                anyRequest().authenticated());
+//        http.formLogin(withDefaults());
+//        http.httpBasic(withDefaults());
         return http.build();
     }
 

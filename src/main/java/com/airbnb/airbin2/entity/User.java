@@ -1,5 +1,6 @@
 package com.airbnb.airbin2.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -26,12 +27,15 @@ public class User {
     @Column(name = "email", nullable = false, unique = true, length = 45)
     private String email;
 
+    @JsonIgnore
     @Column(name = "mobile_number", nullable = false, unique = true, length = 10)
     private String mobileNumber;
 
+    @JsonIgnore
     @Column(name = "user_roles", length = 30)
     private String userRoles;
 
+    @JsonIgnore
     @Column(name = "password", nullable = false)
     private String password;
 
